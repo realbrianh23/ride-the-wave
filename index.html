@@ -296,7 +296,7 @@
         if (!res.ok) return;
         const text = await res.text();
         const rows = text.trim().split('\n').map(r => r.split(','));
-        const data = rows[2];
+        const data = rows[3];
         const profit  = parseFloat(data[0]) || 0;
         const winrate = parseFloat(data[1]) || 0;
         const days    = parseInt(data[2])   || 0;
