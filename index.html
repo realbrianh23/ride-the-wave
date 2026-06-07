@@ -7,216 +7,39 @@
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: #ffffff;
-      min-height: 100vh;
-    }
-
-    .dashboard {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 2.5rem 2rem 3rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .header {
-      width: 100%;
-      display: flex;
-      align-items: flex-end;
-      justify-content: space-between;
-      border-bottom: 1.5px solid #e8e8e8;
-      padding-bottom: 1.25rem;
-      margin-bottom: 4rem;
-    }
-
-    .brand-wave {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 44px;
-      letter-spacing: 2px;
-      line-height: 1;
-      color: #1a1a1a;
-    }
-
+    body { font-family: 'DM Sans', sans-serif; background: #ffffff; min-height: 100vh; }
+    .dashboard { max-width: 900px; margin: 0 auto; padding: 2.5rem 2rem 3rem; display: flex; flex-direction: column; align-items: center; }
+    .header { width: 100%; display: flex; align-items: flex-end; justify-content: space-between; border-bottom: 1.5px solid #e8e8e8; padding-bottom: 1.25rem; margin-bottom: 4rem; }
+    .brand-wave { font-family: 'Bebas Neue', sans-serif; font-size: 44px; letter-spacing: 2px; line-height: 1; color: #1a1a1a; }
     .brand-wave span { color: #1c6bdf; }
-
-    .brand-sub {
-      font-size: 11px;
-      color: #bbb;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-top: 3px;
-    }
-
+    .brand-sub { font-size: 11px; color: #bbb; letter-spacing: 3px; text-transform: uppercase; margin-top: 3px; }
     .goal-block { text-align: right; }
-
-    .goal-label {
-      font-size: 11px;
-      color: #bbb;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-bottom: 2px;
-    }
-
-    .goal-amount {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 32px;
-      color: #1c6bdf;
-    }
-
-    .profit-display {
-      text-align: center;
-      margin-bottom: 3rem;
-    }
-
-    .profit-number {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 80px;
-      color: #1a1a1a;
-      line-height: 1;
-      letter-spacing: 2px;
-    }
-
-    .profit-pct {
-      font-size: 16px;
-      color: #aaa;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      margin-top: 4px;
-      font-weight: 300;
-    }
-
-    .bar-section {
-      width: 100%;
-      padding: 0 0.5rem;
-    }
-
-    .bar-labels {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
-
-    .bar-label {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 22px;
-      color: #ccc;
-      letter-spacing: 1px;
-    }
-
+    .goal-label { font-size: 11px; color: #bbb; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 2px; }
+    .goal-amount { font-family: 'Bebas Neue', sans-serif; font-size: 32px; color: #1c6bdf; }
+    .profit-display { text-align: center; margin-bottom: 3rem; }
+    .profit-number { font-family: 'Bebas Neue', sans-serif; font-size: 80px; color: #1a1a1a; line-height: 1; letter-spacing: 2px; }
+    .profit-pct { font-size: 16px; color: #aaa; letter-spacing: 3px; text-transform: uppercase; margin-top: 4px; font-weight: 300; }
+    .bar-section { width: 100%; padding: 0 0.5rem; }
+    .bar-labels { display: flex; justify-content: space-between; margin-bottom: 12px; }
+    .bar-label { font-family: 'Bebas Neue', sans-serif; font-size: 22px; color: #ccc; letter-spacing: 1px; }
     .bar-label.active { color: #1c6bdf; }
-
-    .bar-wrapper {
-      position: relative;
-      width: 100%;
-      height: 48px;
-      display: flex;
-      align-items: center;
-    }
-
-    .bar-track {
-      position: absolute;
-      left: 16px;
-      right: 16px;
-      height: 14px;
-      background: #eaf0fd;
-      border-radius: 100px;
-      border: 1.5px solid #c5d8f8;
-    }
-
-    .bar-fill {
-      height: 100%;
-      border-radius: 100px;
-      background: linear-gradient(90deg, #1c6bdf 0%, #22c97a 100%);
-      transition: width 0.9s cubic-bezier(0.4, 0, 0.2, 1);
-      min-width: 0;
-    }
-
-    .circle-start {
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: #eaf0fd;
-      border: 2.5px solid #c5d8f8;
-      z-index: 2;
-    }
-
-    .circle-end {
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background: #eaf0fd;
-      border: 2.5px solid #c5d8f8;
-      z-index: 2;
-    }
-
-    .circle-progress {
-      position: absolute;
-      top: 50%;
-      transform: translate(-50%, -50%);
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      background: #22c97a;
-      border: 3px solid #fff;
-      box-shadow: 0 0 0 2px #22c97a;
-      z-index: 3;
-      transition: left 0.9s cubic-bezier(0.4, 0, 0.2, 1);
-      left: 16px;
-    }
-
-    .mini-stats {
-      display: flex;
-      justify-content: center;
-      gap: 0;
-      margin-top: 3rem;
-      width: 100%;
-    }
-
-    .mini-stat {
-      flex: 1;
-      text-align: center;
-      padding: 1.25rem 1rem;
-      border: 1px solid #e8e8e8;
-      background: #f9fdf9;
-    }
-
+    .bar-wrapper { position: relative; width: 100%; height: 48px; display: flex; align-items: center; }
+    .bar-track { position: absolute; left: 16px; right: 16px; height: 14px; background: #eaf0fd; border-radius: 100px; border: 1.5px solid #c5d8f8; }
+    .bar-fill { height: 100%; border-radius: 100px; background: linear-gradient(90deg, #1c6bdf 0%, #22c97a 100%); transition: width 0.9s cubic-bezier(0.4,0,0.2,1); min-width: 0; }
+    .circle-start { position: absolute; left: 0; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 50%; background: #eaf0fd; border: 2.5px solid #c5d8f8; z-index: 2; }
+    .circle-end { position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: 32px; height: 32px; border-radius: 50%; background: #eaf0fd; border: 2.5px solid #c5d8f8; z-index: 2; }
+    .circle-progress { position: absolute; top: 50%; transform: translate(-50%,-50%); width: 40px; height: 40px; border-radius: 50%; background: #22c97a; border: 3px solid #fff; box-shadow: 0 0 0 2px #22c97a; z-index: 3; transition: left 0.9s cubic-bezier(0.4,0,0.2,1); left: 16px; }
+    .mini-stats { display: flex; justify-content: center; gap: 0; margin-top: 3rem; width: 100%; }
+    .mini-stat { flex: 1; text-align: center; padding: 1.25rem 1rem; border: 1px solid #e8e8e8; background: #f9fdf9; }
     .mini-stat:first-child { border-radius: 12px 0 0 12px; }
-    .mini-stat:last-child  { border-radius: 0 12px 12px 0; }
+    .mini-stat:last-child { border-radius: 0 12px 12px 0; }
     .mini-stat + .mini-stat { border-left: none; }
-
-    .mini-stat-value {
-      font-family: 'Bebas Neue', sans-serif;
-      font-size: 36px;
-      color: #22c97a;
-      letter-spacing: 0.5px;
-      line-height: 1;
-    }
-
-    .mini-stat-label {
-      font-size: 11px;
-      color: #aaa;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-top: 6px;
-      font-weight: 400;
-    }
+    .mini-stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 36px; color: #22c97a; letter-spacing: 0.5px; line-height: 1; }
+    .mini-stat-label { font-size: 11px; color: #aaa; letter-spacing: 2px; text-transform: uppercase; margin-top: 6px; font-weight: 400; }
   </style>
 </head>
 <body>
   <div class="dashboard">
-
     <div class="header">
       <div>
         <div class="brand-wave">RIDE THE <span>WAVE</span></div>
@@ -241,7 +64,7 @@
       <div class="bar-wrapper">
         <div class="circle-start"></div>
         <div class="bar-track">
-          <div class="bar-fill" id="bar-fill" style="width: 0%"></div>
+          <div class="bar-fill" id="bar-fill" style="width:0%"></div>
         </div>
         <div class="circle-end"></div>
         <div class="circle-progress" id="circle-progress"></div>
@@ -262,16 +85,16 @@
         <div class="mini-stat-label">Win Rate</div>
       </div>
     </div>
-
   </div>
 
   <script>
-    // ── PASTE YOUR GOOGLE SHEETS CSV URL BELOW ──
-    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSW2D95iYFZvCgSCCl_CypfPx9YBPpnfI4BumsPgY_2mlwN4_NgeU9EN1estU8HBNOp9TRZ_guKwj_B/pub?gid=0&single=true&output=csv';
-    // ────────────────────────────────────────────
-
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSW2D95iYFZvCgSCCl_CypfPx9YBPpnfI4BumsPgY_2mlwN4_NgeU9EN1estUG1fe9oPNW_7D60eX9w/pub?gid=1355851766&single=true&output=csv';
     const GOAL = 100000;
     const REFRESH_MS = 60000;
+
+    function clean(str) {
+      return str ? str.replace(/[^0-9.-]/g, '') : '0';
+    }
 
     function fmtFull(n) {
       return '$' + Math.round(n).toLocaleString();
@@ -279,15 +102,12 @@
 
     function updateUI(profit, winrate, days, trades) {
       const pct = Math.min((profit / GOAL) * 100, 100);
-
       document.getElementById('display-profit').textContent = fmtFull(profit);
       document.getElementById('display-pct').textContent = pct.toFixed(1) + '% of goal';
       document.getElementById('bar-fill').style.width = pct + '%';
-
       const track = document.querySelector('.bar-track');
       const circlePos = 16 + (track.offsetWidth * pct / 100);
       document.getElementById('circle-progress').style.left = circlePos + 'px';
-
       document.getElementById('stat-days').textContent = days;
       document.getElementById('stat-trades').textContent = trades;
       document.getElementById('stat-winrate').textContent = Math.round(winrate) + '%';
@@ -298,18 +118,41 @@
         const res = await fetch(SHEET_CSV_URL + '&t=' + Date.now());
         if (!res.ok) return;
         const text = await res.text();
-        const rows = text.trim().split('\n').map(r => r.split(','));
 
-        // Row 0 = title, Row 1 = headers, Row 2 = your actual data
-        const data = rows[2];
+        // Log raw CSV to console so we can debug if needed
+        console.log('RAW CSV:', text);
 
-        const profit  = parseFloat(data[0].replace(/[^0-9.-]/g, '')) || 0;
-        const winrate = parseFloat(data[1].replace(/[^0-9.-]/g, '')) || 0;
-        const days    = parseInt(data[2].replace(/[^0-9]/g, ''))     || 0;
-        const trades  = parseInt(data[3].replace(/[^0-9]/g, ''))     || 0;
+        const rows = text.trim().split('\n');
+        console.log('Total rows:', rows.length);
 
+        // Find the data row — it's the first row where column A parses as a number
+        let dataRow = null;
+        for (let i = 0; i < rows.length; i++) {
+          const cols = rows[i].split(',');
+          const val = parseFloat(clean(cols[0]));
+          console.log('Row', i, ':', cols, '=> parsed profit:', val);
+          if (!isNaN(val) && cols.length >= 4 && clean(cols[0]) !== '') {
+            dataRow = cols;
+            console.log('Using row', i, 'as data row');
+            break;
+          }
+        }
+
+        if (!dataRow) {
+          console.log('No valid data row found');
+          return;
+        }
+
+        const profit  = parseFloat(clean(dataRow[0])) || 0;
+        const winrate = parseFloat(clean(dataRow[1])) || 0;
+        const days    = parseInt(clean(dataRow[2]))   || 0;
+        const trades  = parseInt(clean(dataRow[3]))   || 0;
+
+        console.log('Final values — profit:', profit, 'winrate:', winrate, 'days:', days, 'trades:', trades);
         updateUI(profit, winrate, days, trades);
-      } catch (e) {}
+      } catch(e) {
+        console.error('Fetch error:', e);
+      }
     }
 
     window.addEventListener('load', () => {
