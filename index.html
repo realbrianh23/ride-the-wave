@@ -130,7 +130,7 @@
     .bar-fill {
       height: 100%;
       border-radius: 100px;
-      background: #1c6bdf;
+      background: linear-gradient(90deg, #1c6bdf 0%, #22c97a 100%);
       transition: width 0.9s cubic-bezier(0.4, 0, 0.2, 1);
       min-width: 0;
     }
@@ -168,9 +168,9 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      background: #1c6bdf;
+      background: #22c97a;
       border: 3px solid #fff;
-      box-shadow: 0 0 0 2px #1c6bdf;
+      box-shadow: 0 0 0 2px #22c97a;
       z-index: 3;
       transition: left 0.9s cubic-bezier(0.4, 0, 0.2, 1);
       left: 16px;
@@ -179,96 +179,39 @@
     .mini-stats {
       display: flex;
       justify-content: center;
-      gap: 2.5rem;
-      margin-top: 2.5rem;
-      flex-wrap: wrap;
+      gap: 0;
+      margin-top: 3rem;
+      width: 100%;
     }
 
-    .mini-stat { text-align: center; }
+    .mini-stat {
+      flex: 1;
+      text-align: center;
+      padding: 1.25rem 1rem;
+      border: 1px solid #e8e8e8;
+      background: #f9fdf9;
+    }
+
+    .mini-stat:first-child { border-radius: 12px 0 0 12px; }
+    .mini-stat:last-child  { border-radius: 0 12px 12px 0; }
+    .mini-stat + .mini-stat { border-left: none; }
 
     .mini-stat-value {
       font-family: 'Bebas Neue', sans-serif;
-      font-size: 22px;
-      color: #bbb;
+      font-size: 36px;
+      color: #22c97a;
       letter-spacing: 0.5px;
+      line-height: 1;
     }
 
     .mini-stat-label {
-      font-size: 10px;
-      color: #ddd;
-      letter-spacing: 2px;
-      text-transform: uppercase;
-      margin-top: 1px;
-    }
-
-    .edit-section {
-      margin-top: 3.5rem;
-      width: 100%;
-      background: #f8faff;
-      border: 1px solid #dde8fa;
-      border-radius: 14px;
-      padding: 1.5rem;
-    }
-
-    .edit-title {
       font-size: 11px;
-      letter-spacing: 2px;
-      text-transform: uppercase;
       color: #aaa;
-      font-weight: 400;
-      margin-bottom: 1rem;
-    }
-
-    .edit-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-bottom: 1rem;
-    }
-
-    .edit-field label {
-      display: block;
-      font-size: 11px;
-      color: #999;
-      letter-spacing: 1px;
+      letter-spacing: 2px;
       text-transform: uppercase;
-      margin-bottom: 5px;
+      margin-top: 6px;
       font-weight: 400;
     }
-
-    .edit-field input {
-      width: 100%;
-      padding: 8px 12px;
-      border: 1px solid #dde;
-      border-radius: 8px;
-      font-size: 15px;
-      font-family: 'DM Sans', sans-serif;
-      color: #1a1a1a;
-      background: #fff;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .edit-field input:focus { border-color: #1c6bdf; }
-
-    .update-btn {
-      background: #1c6bdf;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 28px;
-      font-family: 'DM Sans', sans-serif;
-      font-size: 14px;
-      font-weight: 500;
-      cursor: pointer;
-      letter-spacing: 0.5px;
-      transition: background 0.2s, transform 0.1s;
-    }
-
-    .update-btn:hover { background: #1558c0; }
-    .update-btn:active { transform: scale(0.98); }
-
-    .gs-note { font-size: 11px; color: #bbb; margin-top: 8px; }
   </style>
 </head>
 <body>
@@ -320,45 +263,18 @@
       </div>
     </div>
 
-    <div class="edit-section">
-      <div class="edit-title">Update Numbers</div>
-      <div class="edit-grid">
-        <div class="edit-field">
-          <label>Total Profit ($)</label>
-          <input type="number" id="input-profit" placeholder="e.g. 12500" min="0" />
-        </div>
-        <div class="edit-field">
-          <label>Win Rate (%)</label>
-          <input type="number" id="input-winrate" placeholder="e.g. 65" min="0" max="100" />
-        </div>
-        <div class="edit-field">
-          <label>Days Traded</label>
-          <input type="number" id="input-days" placeholder="e.g. 14" min="0" />
-        </div>
-        <div class="edit-field">
-          <label>Number of Trades</label>
-          <input type="number" id="input-trades" placeholder="e.g. 38" min="0" />
-        </div>
-      </div>
-      <button class="update-btn" onclick="updateDashboard()">Update Dashboard</button>
-      <div class="gs-note">⚡ Google Sheet auto-sync coming soon</div>
-    </div>
-
   </div>
 
   <script>
+    const SHEET_CSV_URL = 'YOUR_GOOGLE_SHEET_CSV_URL_HERE';
     const GOAL = 100000;
+    const REFRESH_MS = 60000;
 
     function fmtFull(n) {
       return '$' + Math.round(n).toLocaleString();
     }
 
-    function updateDashboard() {
-      const profit = parseFloat(document.getElementById('input-profit').value) || 0;
-      const winrate = parseFloat(document.getElementById('input-winrate').value) || 0;
-      const days = parseInt(document.getElementById('input-days').value) || 0;
-      const trades = parseInt(document.getElementById('input-trades').value) || 0;
-
+    function updateUI(profit, winrate, days, trades) {
       const pct = Math.min((profit / GOAL) * 100, 100);
 
       document.getElementById('display-profit').textContent = fmtFull(profit);
@@ -366,9 +282,7 @@
       document.getElementById('bar-fill').style.width = pct + '%';
 
       const track = document.querySelector('.bar-track');
-      const trackLeft = 16;
-      const trackWidth = track.offsetWidth;
-      const circlePos = trackLeft + (trackWidth * pct / 100);
+      const circlePos = 16 + (track.offsetWidth * pct / 100);
       document.getElementById('circle-progress').style.left = circlePos + 'px';
 
       document.getElementById('stat-days').textContent = days;
@@ -376,8 +290,25 @@
       document.getElementById('stat-winrate').textContent = Math.round(winrate) + '%';
     }
 
+    async function fetchData() {
+      try {
+        const res = await fetch(SHEET_CSV_URL + '&t=' + Date.now());
+        if (!res.ok) return;
+        const text = await res.text();
+        const rows = text.trim().split('\n').map(r => r.split(','));
+        const data = rows[1];
+        const profit  = parseFloat(data[0]) || 0;
+        const winrate = parseFloat(data[1]) || 0;
+        const days    = parseInt(data[2])   || 0;
+        const trades  = parseInt(data[3])   || 0;
+        updateUI(profit, winrate, days, trades);
+      } catch (e) {}
+    }
+
     window.addEventListener('load', () => {
       document.getElementById('circle-progress').style.left = '16px';
+      fetchData();
+      setInterval(fetchData, REFRESH_MS);
     });
   </script>
 </body>
