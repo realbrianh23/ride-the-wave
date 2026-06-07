@@ -92,43 +92,33 @@
     const GOAL = 100000;
     const REFRESH_MS = 60000;
 
-    // Properly parse a CSV line, respecting quoted fields like "$4,000.00"
+    // Parses one CSV line correctly — handles quoted fields like "$4,000.00"
     function parseCSVLine(line) {
-      const result = [];
-      let current = '';
+      const cols = [];
+      let col = '';
       let inQuotes = false;
       for (let i = 0; i < line.length; i++) {
-        const ch = line[i];
-        if (ch === '"') {
-          inQuotes = !inQuotes;
-        } else if (ch === ',' && !inQuotes) {
-          result.push(current.trim());
-          current = '';
-        } else {
-          current += ch;
-        }
+        const c = line[i];
+        if (c === '"') { inQuotes = !inQuotes; continue; }
+        if (c === ',' && !inQuotes) { cols.push(col); col = ''; continue; }
+        col += c;
       }
-      result.push(current.trim());
-      return result;
+      cols.push(col);
+      return cols;
     }
 
-    function toNum(str) {
-      // Strip everything except digits, dot, and minus
-      return parseFloat(str.replace(/[^0-9.-]/g, '')) || 0;
-    }
+    // Strip everything except digits, dot, minus — turns "$4,000.00" into 4000
+    function toNum(s) { return parseFloat((s || '').replace(/[^0-9.-]/g, '')) || 0; }
 
-    function fmtFull(n) {
-      return '$' + Math.round(n).toLocaleString();
-    }
+    function fmtMoney(n) { return '$' + Math.round(n).toLocaleString(); }
 
-    function updateUI(profit, winrate, days, trades) {
+    function render(profit, winrate, days, trades) {
       const pct = Math.min((profit / GOAL) * 100, 100);
-      document.getElementById('display-profit').textContent = fmtFull(profit);
+      document.getElementById('display-profit').textContent = fmtMoney(profit);
       document.getElementById('display-pct').textContent = pct.toFixed(1) + '% of goal';
       document.getElementById('bar-fill').style.width = pct + '%';
-      const track = document.querySelector('.bar-track');
-      const circlePos = 16 + (track.offsetWidth * pct / 100);
-      document.getElementById('circle-progress').style.left = circlePos + 'px';
+      const trackW = document.querySelector('.bar-track').offsetWidth;
+      document.getElementById('circle-progress').style.left = (16 + trackW * pct / 100) + 'px';
       document.getElementById('stat-days').textContent = days;
       document.getElementById('stat-trades').textContent = trades;
       document.getElementById('stat-winrate').textContent = Math.round(winrate) + '%';
@@ -138,23 +128,14 @@
       try {
         const res = await fetch(SHEET_CSV_URL + '&t=' + Date.now());
         if (!res.ok) return;
-        const text = await res.text();
-        const lines = text.trim().split('\n');
+        const lines = (await res.text()).trim().split('\n');
 
-        // Find the first row where column A is a number (skips title + header rows)
-        for (let i = 0; i < lines.length; i++) {
-          const cols = parseCSVLine(lines[i]);
-          const val = toNum(cols[0]);
-          // Must have 4 columns and first col must parse as a real number (not NaN from text)
-          if (cols.length >= 4 && cols[0].replace(/[^0-9]/g, '').length > 0 && !isNaN(val)) {
-            const profit  = toNum(cols[0]);
-            const winrate = toNum(cols[1]);
-            const days    = Math.round(toNum(cols[2]));
-            const trades  = Math.round(toNum(cols[3]));
-            updateUI(profit, winrate, days, trades);
-            break;
-          }
-        }
+        // Row 0 = title, Row 1 = headers, Row 2 = data — hardcoded to index 2
+        if (lines.length < 3) return;
+        const cols = parseCSVLine(lines[2]);
+        if (cols.length < 4) return;
+
+        render(toNum(cols[0]), toNum(cols[1]), Math.round(toNum(cols[2])), Math.round(toNum(cols[3])));
       } catch(e) {}
     }
 
