@@ -92,8 +92,29 @@
     const GOAL = 100000;
     const REFRESH_MS = 60000;
 
-    function clean(str) {
-      return str ? str.replace(/[^0-9.-]/g, '') : '0';
+    // Properly parse a CSV line, respecting quoted fields like "$4,000.00"
+    function parseCSVLine(line) {
+      const result = [];
+      let current = '';
+      let inQuotes = false;
+      for (let i = 0; i < line.length; i++) {
+        const ch = line[i];
+        if (ch === '"') {
+          inQuotes = !inQuotes;
+        } else if (ch === ',' && !inQuotes) {
+          result.push(current.trim());
+          current = '';
+        } else {
+          current += ch;
+        }
+      }
+      result.push(current.trim());
+      return result;
+    }
+
+    function toNum(str) {
+      // Strip everything except digits, dot, and minus
+      return parseFloat(str.replace(/[^0-9.-]/g, '')) || 0;
     }
 
     function fmtFull(n) {
@@ -118,41 +139,23 @@
         const res = await fetch(SHEET_CSV_URL + '&t=' + Date.now());
         if (!res.ok) return;
         const text = await res.text();
+        const lines = text.trim().split('\n');
 
-        // Log raw CSV to console so we can debug if needed
-        console.log('RAW CSV:', text);
-
-        const rows = text.trim().split('\n');
-        console.log('Total rows:', rows.length);
-
-        // Find the data row — it's the first row where column A parses as a number
-        let dataRow = null;
-        for (let i = 0; i < rows.length; i++) {
-          const cols = rows[i].split(',');
-          const val = parseFloat(clean(cols[0]));
-          console.log('Row', i, ':', cols, '=> parsed profit:', val);
-          if (!isNaN(val) && cols.length >= 4 && clean(cols[0]) !== '') {
-            dataRow = cols;
-            console.log('Using row', i, 'as data row');
+        // Find the first row where column A is a number (skips title + header rows)
+        for (let i = 0; i < lines.length; i++) {
+          const cols = parseCSVLine(lines[i]);
+          const val = toNum(cols[0]);
+          // Must have 4 columns and first col must parse as a real number (not NaN from text)
+          if (cols.length >= 4 && cols[0].replace(/[^0-9]/g, '').length > 0 && !isNaN(val)) {
+            const profit  = toNum(cols[0]);
+            const winrate = toNum(cols[1]);
+            const days    = Math.round(toNum(cols[2]));
+            const trades  = Math.round(toNum(cols[3]));
+            updateUI(profit, winrate, days, trades);
             break;
           }
         }
-
-        if (!dataRow) {
-          console.log('No valid data row found');
-          return;
-        }
-
-        const profit  = parseFloat(clean(dataRow[0])) || 0;
-        const winrate = parseFloat(clean(dataRow[1])) || 0;
-        const days    = parseInt(clean(dataRow[2]))   || 0;
-        const trades  = parseInt(clean(dataRow[3]))   || 0;
-
-        console.log('Final values — profit:', profit, 'winrate:', winrate, 'days:', days, 'trades:', trades);
-        updateUI(profit, winrate, days, trades);
-      } catch(e) {
-        console.error('Fetch error:', e);
-      }
+      } catch(e) {}
     }
 
     window.addEventListener('load', () => {
