@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ride The Wave — Trading Challenge</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: #ffffff;
+      min-height: 100vh;
+    }
+
+    .dashboard {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 2.5rem 2rem 3rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .header {
+      width: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      border-bottom: 1.5px solid #e8e8e8;
+      padding-bottom: 1.25rem;
+      margin-bottom: 4rem;
+    }
+
+    .brand-wave {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 44px;
+      letter-spacing: 2px;
+      line-height: 1;
+      color: #1a1a1a;
+    }
+
+    .brand-wave span { color: #1c6bdf; }
+
+    .brand-sub {
+      font-size: 11px;
+      color: #bbb;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 3px;
+    }
+
+    .goal-block { text-align: right; }
+
+    .goal-label {
+      font-size: 11px;
+      color: #bbb;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .goal-amount {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 32px;
+      color: #1c6bdf;
+    }
+
+    .profit-display {
+      text-align: center;
+      margin-bottom: 3rem;
+    }
+
+    .profit-number {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 80px;
+      color: #1a1a1a;
+      line-height: 1;
+      letter-spacing: 2px;
+    }
+
+    .profit-pct {
+      font-size: 16px;
+      color: #aaa;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      margin-top: 4px;
+      font-weight: 300;
+    }
+
+    .bar-section {
+      width: 100%;
+      padding: 0 0.5rem;
+    }
+
+    .bar-labels {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+    }
+
+    .bar-label {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      color: #ccc;
+      letter-spacing: 1px;
+    }
+
+    .bar-label.active { color: #1c6bdf; }
+
+    .bar-wrapper {
+      position: relative;
+      width: 100%;
+      height: 48px;
+      display: flex;
+      align-items: center;
+    }
+
+    .bar-track {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      height: 14px;
+      background: #eaf0fd;
+      border-radius: 100px;
+      border: 1.5px solid #c5d8f8;
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 100px;
+      background: #1c6bdf;
+      transition: width 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+      min-width: 0;
+    }
+
+    .circle-start {
+      position: absolute;
+      left: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #eaf0fd;
+      border: 2.5px solid #c5d8f8;
+      z-index: 2;
+    }
+
+    .circle-end {
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #eaf0fd;
+      border: 2.5px solid #c5d8f8;
+      z-index: 2;
+    }
+
+    .circle-progress {
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #1c6bdf;
+      border: 3px solid #fff;
+      box-shadow: 0 0 0 2px #1c6bdf;
+      z-index: 3;
+      transition: left 0.9s cubic-bezier(0.4, 0, 0.2, 1);
+      left: 16px;
+    }
+
+    .mini-stats {
+      display: flex;
+      justify-content: center;
+      gap: 2.5rem;
+      margin-top: 2.5rem;
+      flex-wrap: wrap;
+    }
+
+    .mini-stat { text-align: center; }
+
+    .mini-stat-value {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: 22px;
+      color: #bbb;
+      letter-spacing: 0.5px;
+    }
+
+    .mini-stat-label {
+      font-size: 10px;
+      color: #ddd;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 1px;
+    }
+
+    .edit-section {
+      margin-top: 3.5rem;
+      width: 100%;
+      background: #f8faff;
+      border: 1px solid #dde8fa;
+      border-radius: 14px;
+      padding: 1.5rem;
+    }
+
+    .edit-title {
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: #aaa;
+      font-weight: 400;
+      margin-bottom: 1rem;
+    }
+
+    .edit-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 1rem;
+    }
+
+    .edit-field label {
+      display: block;
+      font-size: 11px;
+      color: #999;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+      font-weight: 400;
+    }
+
+    .edit-field input {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #dde;
+      border-radius: 8px;
+      font-size: 15px;
+      font-family: 'DM Sans', sans-serif;
+      color: #1a1a1a;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .edit-field input:focus { border-color: #1c6bdf; }
+
+    .update-btn {
+      background: #1c6bdf;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 28px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .update-btn:hover { background: #1558c0; }
+    .update-btn:active { transform: scale(0.98); }
+
+    .gs-note { font-size: 11px; color: #bbb; margin-top: 8px; }
+  </style>
+</head>
+<body>
+  <div class="dashboard">
+
+    <div class="header">
+      <div>
+        <div class="brand-wave">RIDE THE <span>WAVE</span></div>
+        <div class="brand-sub">Trading Challenge — Brian</div>
+      </div>
+      <div class="goal-block">
+        <div class="goal-label">Goal</div>
+        <div class="goal-amount">$100,000</div>
+      </div>
+    </div>
+
+    <div class="profit-display">
+      <div class="profit-number" id="display-profit">$0</div>
+      <div class="profit-pct" id="display-pct">0% of goal</div>
+    </div>
+
+    <div class="bar-section">
+      <div class="bar-labels">
+        <span class="bar-label">$0</span>
+        <span class="bar-label active">$100K</span>
+      </div>
+      <div class="bar-wrapper">
+        <div class="circle-start"></div>
+        <div class="bar-track">
+          <div class="bar-fill" id="bar-fill" style="width: 0%"></div>
+        </div>
+        <div class="circle-end"></div>
+        <div class="circle-progress" id="circle-progress"></div>
+      </div>
+    </div>
+
+    <div class="mini-stats">
+      <div class="mini-stat">
+        <div class="mini-stat-value" id="stat-days">0</div>
+        <div class="mini-stat-label">Days Traded</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-value" id="stat-trades">0</div>
+        <div class="mini-stat-label">Total Trades</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-value" id="stat-winrate">0%</div>
+        <div class="mini-stat-label">Win Rate</div>
+      </div>
+    </div>
+
+    <div class="edit-section">
+      <div class="edit-title">Update Numbers</div>
+      <div class="edit-grid">
+        <div class="edit-field">
+          <label>Total Profit ($)</label>
+          <input type="number" id="input-profit" placeholder="e.g. 12500" min="0" />
+        </div>
+        <div class="edit-field">
+          <label>Win Rate (%)</label>
+          <input type="number" id="input-winrate" placeholder="e.g. 65" min="0" max="100" />
+        </div>
+        <div class="edit-field">
+          <label>Days Traded</label>
+          <input type="number" id="input-days" placeholder="e.g. 14" min="0" />
+        </div>
+        <div class="edit-field">
+          <label>Number of Trades</label>
+          <input type="number" id="input-trades" placeholder="e.g. 38" min="0" />
+        </div>
+      </div>
+      <button class="update-btn" onclick="updateDashboard()">Update Dashboard</button>
+      <div class="gs-note">⚡ Google Sheet auto-sync coming soon</div>
+    </div>
+
+  </div>
+
+  <script>
+    const GOAL = 100000;
+
+    function fmtFull(n) {
+      return '$' + Math.round(n).toLocaleString();
+    }
+
+    function updateDashboard() {
+      const profit = parseFloat(document.getElementById('input-profit').value) || 0;
+      const winrate = parseFloat(document.getElementById('input-winrate').value) || 0;
+      const days = parseInt(document.getElementById('input-days').value) || 0;
+      const trades = parseInt(document.getElementById('input-trades').value) || 0;
+
+      const pct = Math.min((profit / GOAL) * 100, 100);
+
+      document.getElementById('display-profit').textContent = fmtFull(profit);
+      document.getElementById('display-pct').textContent = pct.toFixed(1) + '% of goal';
+      document.getElementById('bar-fill').style.width = pct + '%';
+
+      const track = document.querySelector('.bar-track');
+      const trackLeft = 16;
+      const trackWidth = track.offsetWidth;
+      const circlePos = trackLeft + (trackWidth * pct / 100);
+      document.getElementById('circle-progress').style.left = circlePos + 'px';
+
+      document.getElementById('stat-days').textContent = days;
+      document.getElementById('stat-trades').textContent = trades;
+      document.getElementById('stat-winrate').textContent = Math.round(winrate) + '%';
+    }
+
+    window.addEventListener('load', () => {
+      document.getElementById('circle-progress').style.left = '16px';
+    });
+  </script>
+</body>
+</html>
