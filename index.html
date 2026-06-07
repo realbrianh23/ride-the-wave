@@ -266,7 +266,10 @@
   </div>
 
   <script>
-    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSW2D95iYFZvCgSCCl_CypfPx9YBPpnfI4BumsPgY_2mlwN4_NgeU9EN1estUG1fe9oPNW_7D60eX9w/pub?gid=1355851766&single=true&output=csv';
+    // ── PASTE YOUR GOOGLE SHEETS CSV URL BELOW ──
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vSW2D95iYFZvCgSCCl_CypfPx9YBPpnfI4BumsPgY_2mlwN4_NgeU9EN1estU8HBNOp9TRZ_guKwj_B/pub?gid=0&single=true&output=csv';
+    // ────────────────────────────────────────────
+
     const GOAL = 100000;
     const REFRESH_MS = 60000;
 
@@ -296,11 +299,15 @@
         if (!res.ok) return;
         const text = await res.text();
         const rows = text.trim().split('\n').map(r => r.split(','));
-        const data = rows[3];
-        const profit  = parseFloat(data[0]) || 0;
-        const winrate = parseFloat(data[1]) || 0;
-        const days    = parseInt(data[2])   || 0;
-        const trades  = parseInt(data[3])   || 0;
+
+        // Row 0 = title, Row 1 = headers, Row 2 = your actual data
+        const data = rows[2];
+
+        const profit  = parseFloat(data[0].replace(/[^0-9.-]/g, '')) || 0;
+        const winrate = parseFloat(data[1].replace(/[^0-9.-]/g, '')) || 0;
+        const days    = parseInt(data[2].replace(/[^0-9]/g, ''))     || 0;
+        const trades  = parseInt(data[3].replace(/[^0-9]/g, ''))     || 0;
+
         updateUI(profit, winrate, days, trades);
       } catch (e) {}
     }
